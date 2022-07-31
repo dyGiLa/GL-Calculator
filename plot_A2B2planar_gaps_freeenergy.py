@@ -3,33 +3,7 @@ from scipy.optimize import fsolve
 import numpy  as np
 import Module_SC_Beta_V06 as SCb
 
-
-def func(x):
-
-    return [4.*beta1*x[1]*x[2]**2 + 2.*(-3.*gz*h + 3.*alpha + 2.*(2.*beta1+beta2+beta3+beta5)*x[1]**2. + 2.*beta2*x[2]**2)*x[0] + 4.*(beta2+beta4)*x[0]**3,
-
-            6.*gz*h*x[1] + 6.*alpha*x[1] + 4.*((beta2+beta4)*x[1]**3 + beta2*x[1]*x[2]**2 + beta1*x[2]**2*x[1] + (2.*beta1+beta2+beta3+beta5)*x[1]*x[0]**2),
-
-            3.*gH*h**2 + 3.*alpha + 2.*((beta1+beta3+beta4+beta5)*x[2]**2 + 2.*beta1*x[1]*x[0] + beta2*(x[1]**2+x[2]**2+x[0]**2)) 
-           ]
-
-def func2(x):
-
-    return [3.*((kb*Tc)**2)*(-gzt*h+alphat)*x[0] + 2.*(beta1t*x[1]*x[2]*x[2] + ((2.*beta1t+beta2t+beta3t+beta5t)*x[1]*x[1]+beta2t*x[2]*x[2])*x[0] + (beta2t+beta4t)*x[0]*x[0]*x[0]),
-
-            x[1]*(3.*((kb*Tc)**2)*(gzt*h+alphat)+2.*(beta2t+beta4t)*x[1]*x[1]+2.*beta2t*x[2]*x[2]) + 2.*beta1t*x[2]*x[2]*x[0] + 2.*(2.*beta1t+beta2t+beta3t+beta5t)*x[1]*x[0]*x[0],
-
-            3.*gHt*h**2 + 3.*((kb*Tc)**2)*alphat + 2.*((beta1t+beta3t+beta4t+beta5t)*x[2]*x[2] + 2.*beta1t*x[1]*x[0] + beta2t*(x[1]*x[1]+x[0]*x[0]+x[2]*x[2]))
-           ]
-
-def func3(x):
-
-    return [3.*(-gzt*h+alphat)*x[0] + 2.*(beta1t*x[1]*x[2]*x[2] + ((2.*beta1t+beta2t+beta3t+beta5t)*x[1]*x[1]+beta2t*x[2]*x[2])*x[0] + (beta2t+beta4t)*x[0]*x[0]*x[0]),
-
-            x[1]*(3.*(gzt*h+alphat)+2.*(beta2t+beta4t)*x[1]*x[1]+2.*beta2t*x[2]*x[2]) + 2.*beta1t*x[2]*x[2]*x[0] + 2.*(2.*beta1t+beta2t+beta3t+beta5t)*x[1]*x[0]*x[0],
-
-            3.*(gHt*h**2)*((kb*Tc)**(-2)) + 3.*alphat + 2.*((beta1t+beta3t+beta4t+beta5t)*x[2]*x[2] + 2.*beta1t*x[1]*x[0] + beta2t*(x[1]*x[1]+x[0]*x[0]+x[2]*x[2]))
-           ]
+import matplotlib.pyplot as plt
 
 
 ##########################################
@@ -42,93 +16,68 @@ p = 32*SCb.bar
 
 T = 0.88*SCb.Tcp(p)
 
-# h = 22200*SCb.Gauss
-
-
-pnoa, pnob = SCb.pno()
-
-#########################################
-
-# alpha = pnoa*SCb.alpha_td(p, T)*SCb.N0(p)
-
-# beta1 = pnob*SCb.beta1_td(p, T)*SCb.N0(p)*(SCb.kb*SCb.Tcp(p))**(-2)
-
-# beta2 = pnob*SCb.beta2_td(p, T)*SCb.N0(p)*(SCb.kb*SCb.Tcp(p))**(-2)
-
-# beta3 = pnob*SCb.beta3_td(p, T)*SCb.N0(p)*(SCb.kb*SCb.Tcp(p))**(-2)
-
-# beta4 = pnob*SCb.beta4_td(p, T)*SCb.N0(p)*(SCb.kb*SCb.Tcp(p))**(-2)
-
-# beta5 = pnob*SCb.beta5_td(p, T)*SCb.N0(p)*(SCb.kb*SCb.Tcp(p))**(-2)
-
-
-# gH = SCb.gH_td(p)*SCb.N0(p)
-
-# gz = SCb.gz_td(p)*SCb.N0(p)
-
-###########################################
-###########################################
-
-kb = SCb.kb
-Tc = SCb.Tcp(p)
-
-alphat = pnoa*SCb.alpha_td(p, T)
-beta1t = pnob*SCb.beta1_td(p, T)
-beta2t = pnob*SCb.beta2_td(p, T)
-beta3t = pnob*SCb.beta3_td(p, T)
-beta4t = pnob*SCb.beta4_td(p, T)
-beta5t = pnob*SCb.beta5_td(p, T)
-
-gzt = SCb.gz_td(p)
-# gzt = 0.
-
-gHList =  SCb.gH_td(p)
-gHt = gHList[0]
-
 
 ###########################################
 
-hList = np.arange(0, 50000*SCb.Gauss, 5, dtype=int)
+h_array = np.arange(0, 50000*SCb.Gauss, 5)
+print(np.shape(h_array))
 
-uuIni = SCb.GapB(p, T)/(kb*Tc)
-ddIni = SCb.GapB(p, T)/(kb*Tc)
-udIni = SCb.GapB(p, T)/(kb*Tc)
+fA2_array = np.zeros(np.shape(h_array))
+fB2_array = np.zeros(np.shape(h_array))
+fplanar_array = np.zeros(np.shape(h_array))
 
-for h in hList:
+Duu2A2_array = np.array([])
+Ddd2A2_array = np.array([])
 
-    if h < 22275:
-      #root = fsolve(func, [uuIni, ddIni, udIni])
-      root = fsolve(func3, [uuIni, ddIni, udIni])
 
-      uuIni = root[0]
-      ddIni = root[1]
-      udIni = root[2]
+Duu2Planar_array = np.array([])
+Ddd2Planar_array = np.array([])
 
-      print(np.isclose(func3(root), [0.0, 0.0, 0.0])) 
-      print(" h is ",h, " Delta list is ",root,"\n")
 
-    elif h == 22275:   
+Duu2B2_array = np.array([])
+Ddd2B2_array = np.array([])
+Dud2B2_array = np.array([])
 
-      uuIni = 2.44952285
-      ddIni = 2.26547759
-      udIni = 0.0
+for h in h_array:
 
-      root = fsolve(func3, [uuIni, ddIni, udIni])
+    gaps2A2 = SCb.GapA2(p, T, h)
 
-      uuIni = root[0]
-      ddIni = root[1]
-      udIni = root[2]
+    gaps2Planar = SCb.GapPlanar(p, T, h)
 
-      print(np.isclose(func3(root), [0.0, 0.0, 0.0])) 
-      print(" h is ",h, " Delta list is ",root,"\n")
+    gaps2B2_noPHA = SCb.GapB2_noPHA(p, T, h)
 
-    elif h > 22275:  
 
-      root = fsolve(func3, [uuIni, ddIni, udIni])
+    Duu2A2_array = np.append(Duu2A2_array, gaps2A2[0])
+    Ddd2A2_array = np.append(Ddd2A2_array, gaps2A2[1])
 
-      uuIni = root[0]
-      ddIni = root[1]
-      udIni = root[2]
+    Duu2Planar_array = np.append(Duu2Planar_array, gaps2Planar[0])
+    Ddd2Planar_array = np.append(Ddd2Planar_array, gaps2Planar[1])
 
-      print(np.isclose(func3(root), [0.0, 0.0, 0.0])) 
-      print(" h is ",h, " Delta list is ",root,"\n") 
+    Duu2B2_array = np.append(Duu2B2_array, gaps2B2_noPHA[0])
+    Ddd2B2_array = np.append(Ddd2B2_array, gaps2B2_noPHA[1])
+    Dud2B2_array = np.append(Dud2B2_array, gaps2B2_noPHA[2])
+
+    
+
+Duu2A2_array = Duu2A2_array*((SCb.kb*SCb.Tcp(p))**(-2))
+Ddd2A2_array = Ddd2A2_array*((SCb.kb*SCb.Tcp(p))**(-2))
+
+Duu2Planar_array = Duu2Planar_array*((SCb.kb*SCb.Tcp(p))**(-2))
+Ddd2Planar_array = Ddd2Planar_array*((SCb.kb*SCb.Tcp(p))**(-2))
+
+Duu2B2_array = Duu2B2_array*((SCb.kb*SCb.Tcp(p))**(-2))
+Ddd2B2_array = Ddd2B2_array*((SCb.kb*SCb.Tcp(p))**(-2))
+Dud2B2_array = Dud2B2_array*((SCb.kb*SCb.Tcp(p))**(-2))
+
+
+################################################################
+
+
+fig, ax = plt.subplots(1,1)
+
+print(np.shape(Duu2A2_array))
+
+ax.plot(h_array,Duu2A2_array,'b-', h_array,Ddd2A2_array,'r-',h_array,Duu2Planar_array,'g-.',h_array,Ddd2Planar_array,'c-.',h_array,Duu2B2_array,'m--',h_array,Ddd2B2_array,'k--',h_array,Dud2B2_array,'y--')
+
+ax.grid()
+plt.show()
