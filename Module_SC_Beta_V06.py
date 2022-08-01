@@ -549,6 +549,23 @@ def fB(p, T):
 
    return coef*((kb*Tcp(p))**2)*N0(p)*((alpha_td(p, T)*alpha_td(p, T))/betaB_td(p, T))
 
+def fA1(p, T, h):
+   '''Bulk equlibrium free energy of uniform A1 phase. Unit is J*m^-3
+   
+   more analytical calculation details see Mathematica notebook.
+   '''
+   pno_tuple = pno()
+
+   gz = gz_td(p)*N0(p)
+   alpha = pno_tuple[0]*alpha_td(p, T)*N0(p)
+
+   beta2 = pno_tuple[1]*beta2_td(p, T)*N0(p)*((kb*Tcp(p))**(-2))
+   beta4 = pno_tuple[1]*beta4_td(p, T)*N0(p)*((kb*Tcp(p))**(-2))
+
+   f = -(-gz*h+alpha)**2/(4.*(beta2+beta4))
+
+   return f
+
 def fA2(p, T, h):
    '''Bulk equlibrium free energy of uniform A2 phase. Unit is J*m^-3
    
@@ -589,7 +606,7 @@ def fPlanar(p, T, h):
   
 
 def fB2_noPHA(p, T, h):
-   '''Bulk equlibrium free energy of uniform B2 phase with out PHA i.e., gz = 0. 
+   '''Bulk equlibrium free energy of uniform B2 phase without PHA i.e., gz = 0. 
    Unit is J*m^-3. more analytical calculation details see Mathematica notebook.
    '''
    gHList = gH_td(p)
@@ -610,6 +627,40 @@ def fB2_noPHA(p, T, h):
 
    return f1+f2
 
+def fB2_PHA(p, T, h, Duu, Ddd, Dud):
+   '''Bulk equlibrium free energy of uniform B2 phase with PHA i.e., gz != 0. 
+   Unit is J*m^-3. Because I don't have analytical solutions of its gaps, this function
+   must get the gaps i.e., Duu, Ddd, Dud from numerical solver's output. Output unit is
+   J*m^-3.
+
+   I wrote a Module called "B2GapsList.py" to offer gaps form *csv file.
+
+   more analytical calculation details see Mathematica notebook.
+   '''
+   gHList = gH_td(p)
+   gH = gHList[1]*N0(p)
+
+   gz = gz_td(p)*N0(p)
+
+   pno_tuple = pno()
+   
+   alpha = pno_tuple[0]*alpha_td(p, T)*N0(p)
+
+   beta1 = pno_tuple[1]*beta1_td(p, T)*N0(p)*((kb*Tcp(p))**(-2))
+   beta2 = pno_tuple[1]*beta2_td(p, T)*N0(p)*((kb*Tcp(p))**(-2))
+   beta3 = pno_tuple[1]*beta3_td(p, T)*N0(p)*((kb*Tcp(p))**(-2))
+   beta4 = pno_tuple[1]*beta4_td(p, T)*N0(p)*((kb*Tcp(p))**(-2))
+   beta5 = pno_tuple[1]*beta5_td(p, T)*N0(p)*((kb*Tcp(p))**(-2))
+
+   Duu=Duu*kb*Tcp(p);Ddd=Ddd*kb*Tcp(p);Dud=Dud*kb*Tcp(p)
+   
+   f = (beta2*(Ddd**4) + beta4*(Ddd**4) + 2.*beta2*(Ddd**2)*(Dud**2) + beta1*(Dud**4)
+       + beta2*(Dud**4) + beta3*(Dud**4) + beta4*(Dud**4) + beta5*(Dud**4)
+       + 4.*beta1*Ddd*(Dud**2)*Duu
+       + 2.*((2.*beta1 + beta2 + beta3 + beta5)*Ddd**2 + beta2*Dud**2)*Duu**2  
+            + (beta2 + beta4)*Duu**4 + 3.*alpha*(Ddd**2 + Dud**2 + Duu**2)  
+            + 3.*(Ddd - Duu)*(Ddd + Duu)*gz*h + 3.*(Dud**2)*gH*h*h)/9.
+   return f
    
 def GapA(p, T):
    '''\Delta_{A}(p, T) for uniform A phase.
@@ -634,6 +685,29 @@ def GapB(p, T):
    coef = -(1./2.)*(pnoa/pnob)
 
    return np.sqrt(coef*((kb*Tcp(p))**2)*(alpha_td(p, T)/betaB_td(p, T)))
+
+def GapA1(p, T, h):
+   '''Gaps of magentic A1 phase under h field. 
+   This function return list of squre of gaps (in SI, J^2) or 
+   gaps (in SI unit, J) of A2.
+
+   The first list element is B2-like, while the second list element
+   is A2-like. They are different from the coefficient.  
+
+   g_z term isn't zero in this case, this analytical solution is 
+   gotten though Mathematica (10.1).
+   '''
+   pno_tuple = pno()
+
+   gz = gz_td(p)*N0(p)
+   alpha = pno_tuple[0]*alpha_td(p, T)*N0(p)
+
+   beta2 = pno_tuple[1]*beta2_td(p, T)*N0(p)*((kb*Tcp(p))**(-2))
+   beta4 = pno_tuple[1]*beta4_td(p, T)*N0(p)*((kb*Tcp(p))**(-2))
+
+   D2 = (gz*h-alpha)/(beta2+beta4)
+
+   return np.array([(3./2.)*D2, D2])
 
 def GapA2(p, T, h):
    '''Gaps of magentic A2 phase under h field. 
