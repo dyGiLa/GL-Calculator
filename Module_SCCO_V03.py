@@ -110,7 +110,7 @@ class BETA:
     
      def __init__(self,name):
          self.name = name
-         print(" SC object is crated ")
+     #    print(" SC object is crated ")
 
      def c1_function(self,P,c1,pressure):
         self.c1p =  np.interp(pressure,P,c1)

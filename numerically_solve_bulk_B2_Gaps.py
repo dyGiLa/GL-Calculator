@@ -88,15 +88,15 @@ gHt = gHList[0]
 
 ###########################################
 
-hList = np.arange(0, 50000*SCb.Gauss, 5, dtype=int)
+h_array = np.arange(0, 50000*SCb.Gauss, 5)
 
 uuIni = SCb.GapB(p, T)/(kb*Tc)
 ddIni = SCb.GapB(p, T)/(kb*Tc)
 udIni = SCb.GapB(p, T)/(kb*Tc)
 
-for h in hList:
+for h in h_array:
 
-    if h < 22275:
+    
       #root = fsolve(func, [uuIni, ddIni, udIni])
       root = fsolve(func3, [uuIni, ddIni, udIni])
 
@@ -104,31 +104,39 @@ for h in hList:
       ddIni = root[1]
       udIni = root[2]
 
-      print(np.isclose(func3(root), [0.0, 0.0, 0.0])) 
-      print(" h is ",h, " Delta list is ",root,"\n")
+      if (root[0]<0 or root[1]<0 or root[2]<0):
+      #    print(" nagetive gaps appear, breaks")
+          break
 
-    elif h == 22275:   
+      else:
+          
+          print(p,'  ',T/Tc,'  ',h,'  ',root[0],'  ',root[1],'  ',root[2],"\n")
 
-      uuIni = 2.44952285
-      ddIni = 2.26547759
-      udIni = 0.0
+      #print(np.isclose(func3(root), [0.0, 0.0, 0.0])) 
+      #print(" h is ",h, " Delta list is ",root,"\n")
 
-      root = fsolve(func3, [uuIni, ddIni, udIni])
+    
 
-      uuIni = root[0]
-      ddIni = root[1]
-      udIni = root[2]
+      # uuIni = 2.44952285
+      # ddIni = 2.26547759
+      # udIni = 0.0
 
-      print(np.isclose(func3(root), [0.0, 0.0, 0.0])) 
-      print(" h is ",h, " Delta list is ",root,"\n")
+      # root = fsolve(func3, [uuIni, ddIni, udIni])
 
-    elif h > 22275:  
+      # uuIni = root[0]
+      # ddIni = root[1]
+      # udIni = root[2]
 
-      root = fsolve(func3, [uuIni, ddIni, udIni])
+      # print(np.isclose(func3(root), [0.0, 0.0, 0.0])) 
+      # print(" h is ",h, " Delta list is ",root,"\n")
 
-      uuIni = root[0]
-      ddIni = root[1]
-      udIni = root[2]
+    
 
-      print(np.isclose(func3(root), [0.0, 0.0, 0.0])) 
-      print(" h is ",h, " Delta list is ",root,"\n") 
+      # root = fsolve(func3, [uuIni, ddIni, udIni])
+
+      # uuIni = root[0]
+      # ddIni = root[1]
+      # udIni = root[2]
+
+      # print(np.isclose(func3(root), [0.0, 0.0, 0.0])) 
+      # print(" h is ",h, " Delta list is ",root,"\n") 
