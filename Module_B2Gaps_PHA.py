@@ -5,7 +5,7 @@ import numpy as np
 
 # import the csv data of B2 gaps generated fsolve
 
-csvSource = open('B2gaps_32bar088Tc.csv','r')
+csvSource = open('B2gaps_32bar096Tc.csv','r')
 B2gaps = list(csv.reader(csvSource, delimiter=','))
 csvSource.close()
 
