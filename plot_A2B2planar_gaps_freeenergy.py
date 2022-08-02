@@ -15,12 +15,12 @@ SCb.turn_on_Greywall()
 
 p = 32*SCb.bar
 
-T = 0.88*SCb.Tcp(p)
+T = 0.96*SCb.Tcp(p)
 
 
 ###########################################
 
-h_array = np.arange(0,500000*SCb.Gauss, 50)
+h_array = np.arange(0,100000*SCb.Gauss, 10)
 # print(np.shape(h_array))
 
 fA2_array = np.array([])
@@ -143,20 +143,34 @@ fig1, ax1 = plt.subplots(1,1)
 
 ax1.plot(h_array,np.sqrt(Duu2A1_B2Like_array),'b:',h_array,np.sqrt(Duu2A1_A2Like_array),'r:',h_array,np.sqrt(Duu2A2_array),'b-', h_array,np.sqrt(Ddd2A2_array),'r-',h_array,np.sqrt(Duu2Planar_array),'g-.',h_array,np.sqrt(Ddd2Planar_array),'c-.',B2gaps.hList,B2gaps.DuuArray,'m--',B2gaps.hList,B2gaps.DddArray,'k--',B2gaps.hList,B2gaps.DudArray,'y--')
 
+ax1.set_xlabel(r"h/Gauss", fontsize=20)
+ax1.set_ylabel(r"$\Delta/k_{B} T_{c}$", fontsize=20)
+
 ax1.grid()
 
+################################################################
 
 fig2, ax2 = plt.subplots(1,1)
 
 # ax2.plot(h_array,fA2_array,'b-', h_array,fPlanar_array,'r-.',h_array,fB2_array,'g--', )
 ax2.plot(h_array,fA1_array,'m:',h_array,fA2_array,'b-', h_array,fPlanar_array,'r-.',B2gaps.hList,fB2_PHA,'g--')
 
+ax2.legend({r"$f_{A_{1}}$",r"$f_{A_{2}}$",r"$f_{planar}$",r"$f_{B_{2}}$"}, fontsize=15)
+
+ax2.set_xlabel(r"h/Gauss", fontsize=20)
+ax2.set_ylabel(r"$f_{x}/J m^{-3}$", fontsize=20)
+
+
 ax2.grid()
 
+################################################################
 
 fig3, ax3 = plt.subplots(1,1)
 
 ax3.plot(h_array,fA1_array,'m:',h_array,fA2_array,'b-', h_array,fPlanar_array,'r-.')
+
+ax3.set_xlabel(r"h/Gauss", fontsize=20)
+ax3.set_ylabel(r"$f_{x}/J m^{-3}$", fontsize=20)
 
 ax3.grid()
 
