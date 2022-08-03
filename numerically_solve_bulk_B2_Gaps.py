@@ -40,7 +40,7 @@ SCb.turn_on_Greywall()
 
 p = 32*SCb.bar
 
-T = 0.96*SCb.Tcp(p)
+T = 0.88*SCb.Tcp(p)
 
 # h = 22200*SCb.Gauss
 
@@ -69,11 +69,13 @@ gHt = gHList[0]
 
 ###########################################
 
-h_array = np.arange(0, 50000*SCb.Gauss, 5)
+h_array = np.arange(0, 150000*SCb.Gauss, 50)
 
 uuIni = SCb.GapB(p, T)/(kb*Tc)
 ddIni = SCb.GapB(p, T)/(kb*Tc)
 udIni = SCb.GapB(p, T)/(kb*Tc)
+
+print(uuIni,ddIni,udIni)
 
 for h in h_array:
 

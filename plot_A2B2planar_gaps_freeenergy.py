@@ -15,12 +15,12 @@ SCb.turn_on_Greywall()
 
 p = 32*SCb.bar
 
-T = 0.96*SCb.Tcp(p)
+T = 0.88*SCb.Tcp(p)
 
 
 ###########################################
 
-h_array = np.arange(0,100000*SCb.Gauss, 10)
+h_array = np.arange(0,300000*SCb.Gauss, 10)
 # print(np.shape(h_array))
 
 fA2_array = np.array([])
@@ -97,7 +97,7 @@ for h in h_array:
       fPlanar_array = np.append(fPlanar_array, fPlanar)
         
       
-    if (gaps2B2_noPHA[0]<0 or gaps2B2_noPHA[1] or gaps2B2_noPHA[2]):
+    if (gaps2B2_noPHA[0]<0 or gaps2B2_noPHA[1]<0 or gaps2B2_noPHA[2]<0):
 
         Duu2B2_array = np.append(Duu2B2_array, np.nan)
         Ddd2B2_array = np.append(Ddd2B2_array, np.nan)
@@ -128,18 +128,20 @@ Dud2B2_array = Dud2B2_array*((SCb.kb*SCb.Tcp(p))**(-2))
 
 
 ################################################################
+###  calculate the free energy of B2_PHA from numeirca data  ###
+################################################################
 
 fB2_PHA = SCb.fB2_PHA(p, T, B2gaps.hArray, B2gaps.DuuArray, B2gaps.DddArray, B2gaps.DudArray)
 # print(" got fB2_PHA array!! ")
 
 ################################################################
 
+################################################################
+###           plot gaps and freeenergy with B2_PHA           ###  
+################################################################
+
 
 fig1, ax1 = plt.subplots(1,1)
-
-# print(np.shape(Duu2A2_array))
-
-# ax1.plot(h_array,np.sqrt(Duu2A2_array),'b-', h_array,np.sqrt(Ddd2A2_array),'r-',h_array,np.sqrt(Duu2Planar_array),'g-.',h_array,np.sqrt(Ddd2Planar_array),'c-.',h_array,np.sqrt(Duu2B2_array),'m--',h_array,np.sqrt(Ddd2B2_array),'k--',h_array,np.sqrt(Dud2B2_array),'y--')
 
 ax1.plot(h_array,np.sqrt(Duu2A1_B2Like_array),'b:',h_array,np.sqrt(Duu2A1_A2Like_array),'r:',h_array,np.sqrt(Duu2A2_array),'b-', h_array,np.sqrt(Ddd2A2_array),'r-',h_array,np.sqrt(Duu2Planar_array),'g-.',h_array,np.sqrt(Ddd2Planar_array),'c-.',B2gaps.hList,B2gaps.DuuArray,'m--',B2gaps.hList,B2gaps.DddArray,'k--',B2gaps.hList,B2gaps.DudArray,'y--')
 
@@ -155,7 +157,7 @@ fig2, ax2 = plt.subplots(1,1)
 # ax2.plot(h_array,fA2_array,'b-', h_array,fPlanar_array,'r-.',h_array,fB2_array,'g--', )
 ax2.plot(h_array,fA1_array,'m:',h_array,fA2_array,'b-', h_array,fPlanar_array,'r-.',B2gaps.hList,fB2_PHA,'g--')
 
-ax2.legend({r"$f_{A_{1}}$",r"$f_{A_{2}}$",r"$f_{planar}$",r"$f_{B_{2}}$"}, fontsize=15)
+ax2.legend({r"$f_{A_{1}}$",r"$f_{A_{2}}$",r"$f_{planar}$",r"$f_{B_{2}}^{PHA}$"}, fontsize=15)
 
 ax2.set_xlabel(r"h/Gauss", fontsize=20)
 ax2.set_ylabel(r"$f_{x}/J m^{-3}$", fontsize=20)
@@ -164,15 +166,73 @@ ax2.set_ylabel(r"$f_{x}/J m^{-3}$", fontsize=20)
 ax2.grid()
 
 ################################################################
+##            plot gaps and freeenergy without B2_PHA        ###
+################################################################
 
 fig3, ax3 = plt.subplots(1,1)
 
-ax3.plot(h_array,fA1_array,'m:',h_array,fA2_array,'b-', h_array,fPlanar_array,'r-.')
+ax3.plot(h_array,np.sqrt(Duu2A1_B2Like_array),'b:',h_array,np.sqrt(Duu2A1_A2Like_array),'r:',h_array,np.sqrt(Duu2A2_array),'b-', h_array,np.sqrt(Ddd2A2_array),'r-',h_array,np.sqrt(Duu2Planar_array),'g-.',h_array,np.sqrt(Ddd2Planar_array),'c-.',h_array,np.sqrt(Duu2B2_array),'m--',h_array,np.sqrt(Ddd2B2_array),'k--',h_array,np.sqrt(Dud2B2_array),'y--')
 
 ax3.set_xlabel(r"h/Gauss", fontsize=20)
-ax3.set_ylabel(r"$f_{x}/J m^{-3}$", fontsize=20)
+ax3.set_ylabel(r"$\Delta/k_{B} T_{c}$", fontsize=20)
 
 ax3.grid()
+
+################################################################
+
+fig4, ax4 = plt.subplots(1,1)
+
+# ax2.plot(h_array,fA2_array,'b-', h_array,fPlanar_array,'r-.',h_array,fB2_array,'g--', )
+ax4.plot(h_array,fA1_array,'m:',h_array,fA2_array,'b-', h_array,fPlanar_array,'r-.',h_array,fB2_array,'g--')
+
+ax4.legend({r"$f_{A_{1}}$",r"$f_{A_{2}}$",r"$f_{planar}$",r"$f_{B_{2}}^{noPHA}$"}, fontsize=15)
+
+ax4.set_xlabel(r"h/Gauss", fontsize=20)
+ax4.set_ylabel(r"$f_{x}/J m^{-3}$", fontsize=20)
+
+
+ax4.grid()
+
+
+################################################################
+###      Gaps plot for B2 family (B2PHA, planar, A1)         ###
+################################################################
+
+fig5, ax5 = plt.subplots(1,1)
+
+A1line = ax5.plot(h_array,np.sqrt(Duu2A1_B2Like_array),'b:')
+
+planarDuuline = ax5.plot(h_array,np.sqrt(Duu2Planar_array),'g-.')
+planarDddline = ax5.plot(h_array,np.sqrt(Ddd2Planar_array),'c-.')
+
+B2Duuline = ax5.plot(B2gaps.hList,B2gaps.DuuArray,'m--')
+B2Dddline = ax5.plot(B2gaps.hList,B2gaps.DddArray,'k--')
+B2Dudline = ax5.plot(B2gaps.hList,B2gaps.DudArray,'y--')
+
+ax5.set_xlabel(r"h/Gauss", fontsize=20)
+ax5.set_ylabel(r"$\Delta/k_{B} T_{c}$", fontsize=20)
+ax5.legend([A1line,planarDuuline,planarDddline,B2Duuline,B2Dddline,B2Dudline],[r"$\Delta_{uu}^{A_{1}}$",r"$\Delta_{uu}^{planar}$",r"$\Delta_{dd}^{planar}$",r"$\Delta_{uu}^{B_{2}}$",r"$\Delta_{dd}^{B_{2}}$",r"$\Delta_{ud}^{B_{2}}$"],fontsize=15)
+
+ax5.grid()
+
+
+
+
+
+
+
+
+
+
+
+# fig5, ax5 = plt.subplots(1,1)
+
+# ax5.plot(h_array,fA1_array,'m:',h_array,fA2_array,'b-', h_array,fPlanar_array,'r-.')
+
+# ax5.set_xlabel(r"h/Gauss", fontsize=20)
+# ax5.set_ylabel(r"$f_{x}/J m^{-3}$", fontsize=20)
+
+# ax5.grid()
 
 
 
