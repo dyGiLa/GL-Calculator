@@ -53,12 +53,10 @@ import Module_RWS_SC_expo_poly_correction as expco
 ####                  Constants declations                       ####
 #####################################################################
 ####
-#'''
 #  Those constants are crucial when user want to call physical qulities,
 #  such as density of state N(0), symmetry breaking temperature Tc or
 #  temperature-dependent GL coherent length.
 
-#'''
 #####################################################################
 
 # Length unit, Time unit, Energy unit, mass unit, pressure unit 
@@ -167,7 +165,6 @@ def turn_WS15_SC_on():
 ##                Temperature is in unit mK                         ##
 ######################################################################
 
-
 coef_Tc = np.array([0.90972399274531, 0.14037182852625, -0.0074017331747577, 2.8617547367067e-4,-6.5064429600510e-6, 6.0754459040296e-8])
 coef_TAB = np.array([-26.864685876026, 5.2647866128370, -0.37617826876151, 0.013325635880953, -2.3510107585468e-4, 1.6519539175010e-6])
 
@@ -239,7 +236,7 @@ def xi0p(p):
    # nano meter
    # m = 1; nm = (10**(-9))*m 
    
-   BetaObject.xi0_function(SC.P,SC.XI0,p); return (BetaObject.xi0)*nm
+   BetaObject.xi0_function(SC.P,SC.XI0,p); return (BetaObject.xi0)
 
 # xiGL(p,T) from JWS PRB, there is wired " 20 " 
 def xiGL_JWS(p, T):
@@ -288,7 +285,8 @@ def beta1_td(p, T, key=SC_Correction_Switch, scOption_WS=WimanSauls15_SC):
    # print("\n key looks like ", key)
    
    if (key == "ON") and (scOption_WS == "NO"):
-     q = expco.q(p, order_q) 
+     #q = expco.q(p, order_q)
+     q = 0.
 
      # print("\n q looks like ", q)
 
@@ -312,7 +310,8 @@ def beta2_td(p, T, key=SC_Correction_Switch, scOption_WS=WimanSauls15_SC):
     BetaObject.c2_function(SC.P,SC.c2,p);
 
     if (key == "ON") and (scOption_WS == "NO"):
-      q = expco.q(p, order_q)  
+     #q = expco.q(p, order_q)
+      q = 0.
 
       if q <= 0:
         return 2. + (T/Tcp(p))*np.exp(q)*BetaObject.c2p
@@ -337,7 +336,8 @@ def beta3_td(p, T, key=SC_Correction_Switch, scOption_WS=WimanSauls15_SC):
    BetaObject.c3_function(SC.P,SC.c3,p);
 
    if (key == "ON") and (scOption_WS == "NO"):
-      q = expco.q(p, order_q) 
+     #q = expco.q(p, order_q)
+      q = 0.
 
       if q <= 0:
         return 2. + (T/Tcp(p))*np.exp(q)*BetaObject.c3p
@@ -361,7 +361,8 @@ def beta4_td(p, T, key=SC_Correction_Switch, scOption_WS=WimanSauls15_SC):
    BetaObject.c4_function(SC.P,SC.c4,p);
 
    if (key == "ON") and (scOption_WS == "NO"):
-      q = expco.q(p, order_q) 
+     #q = expco.q(p, order_q)
+      q = 0.
 
       if q <= 0:
         return 2. + (T/Tcp(p))*np.exp(q)*BetaObject.c4p
@@ -385,7 +386,8 @@ def beta5_td(p, T, key=SC_Correction_Switch, scOption_WS=WimanSauls15_SC):
    BetaObject.c5_function(SC.P,SC.c5,p);
 
    if (key == "ON") and (scOption_WS == "NO"):
-      q = expco.q(p, order_q) 
+     #q = expco.q(p, order_q)
+      q = 0.
 
       if q <= 0:
         return -2. + (T/Tcp(p))*np.exp(q)*BetaObject.c5p
@@ -409,7 +411,7 @@ def beta5_td(p, T, key=SC_Correction_Switch, scOption_WS=WimanSauls15_SC):
 #                                                                        #
 #   \tilde{\beta}_{A}, \tilde{\beta}_{B}, fA, fB, \Delta_{A}, \Delta_{B} #
 #                                                                        #
-###########################################################################                                 
+##########################################################################
 
 # \beta_A                                 
 def betaA_td(p, T): return beta2_td(p, T) + beta4_td(p, T) + beta5_td(p, T)
@@ -474,9 +476,16 @@ def GapB(p, T):
 
    return np.sqrt(coef*((kb*Tcp(p))**2)*(alpha_td(p, T)/betaB_td(p, T)))
 
+def gapA(p, t):
+   '''GapA in unit of Kb*Tcp
+   '''
+   return GapA(p, t*Tcp(p))/(Tcp(p)*kb)
+
+def gapB(p, t):
+   '''GapA in unit of Kb*Tcp
+   '''
+   return GapB(p, t*Tcp(p))/(Tcp(p)*kb)
    
-
-
 ########################################################################
 ##       t_AB form RWS2019 and WS2015 strong coupling data sheets     ##
 ########################################################################
@@ -493,13 +502,6 @@ def tAB_RWS(p):
    tab_rws = 1./(3.*BetaObject.c1p + BetaObject.c3p - 2.*BetaObject.c4p - 2.*BetaObject.c5p)
 
    return tab_rws
-
-   # if (tab_rws <= 1.) and (tab_rws > 0.):
-   #    return tab_rws
-   # else:
-   #    return np.nan
-
-   # return tab_rws
 
 # correccted tAB from RWS19 SC, only work when SC_Correction_Switch == "NO"
 def tAB_RWSco(p):
