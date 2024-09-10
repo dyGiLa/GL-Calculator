@@ -238,17 +238,26 @@ def xi0p(p):
    
    BetaObject.xi0_function(SC.P,SC.XI0,p); return (BetaObject.xi0)
 
+# zero temperure xiGL
+def xi0GLp(p):
+   # 0 Temperure GL coherent length, nanometer
+   # zeta3 = 1.2020569031595942854
+    xiGL = xi0p(p)*(np.sqrt((7.*zeta3)/20.));
+    return xiGL
+   
 # xiGL(p,T) from JWS PRB, there is wired " 20 " 
-def xiGL_JWS(p, T):
+def xiGL_JWS(p, t):
    # p,T dependent GL coherent length, nanometer
    # zeta3 = 1.2020569031595942854
+    T = t * Tcp(p)
     xiGL = xi0p(p)*(np.sqrt((7.*zeta3)/20.));
     return xiGL/(np.sqrt(1.-T/Tcp(p)))
 
 # xiGL(p, T) from Sauls Mithushima paper and Osheoff Cross 1977 PRL about mesument of surface tension
-def xiGL_OC(p, T):
+def xiGL_OC(p, t):
    # p,T dependent GL coherent length, nanometer
    # zeta3 = 1.2020569031595942854;
+    T = t * Tcp(p)   
     xiGL = xi0p(p)*(np.sqrt((7.*zeta3)/12.));
     return xiGL/(np.sqrt(1.-T/Tcp(p)))
  
@@ -422,6 +431,14 @@ def betaB_td(p, T):
     return (beta1_td(p, T) + beta2_td(p, T)
             + (1./3.)*(beta3_td(p, T) + beta4_td(p, T) + beta5_td(p, T)))
 
+def betaPolar_td(p, T):
+   return (beta1_td(p, T) + beta2_td(p, T)
+            + beta3_td(p, T) + beta4_td(p, T) + beta5_td(p, T))
+
+def betaPlanar_td(p, T):
+   return (beta1_td(p, T) + beta2_td(p, T)
+            + (1./2.)*(beta3_td(p, T) + beta4_td(p, T) + beta5_td(p, T)))
+
 # bulk fA, with order parameter (\Delta/sqrt(2))*x_alpha*(x_i + i*y_i)
 def fA(p, T):
    '''Bulk GL free energy of uniform A phase.
@@ -476,6 +493,31 @@ def GapB(p, T):
 
    return np.sqrt(coef*((kb*Tcp(p))**2)*(alpha_td(p, T)/betaB_td(p, T)))
 
+def GapPolar(p, T):
+   '''\Delta_{Polar}(p, T) for uniform polar phase.
+   '''
+   # J = 1.; Kelvin = 1.
+   # kb = 1.380649*(10**(-23))*J*(Kelvin**(-1))
+
+   pno_tuple = pno();pnoa = pno_tuple[0];pnob = pno_tuple[1]
+
+   coef = -(1./2.)*(pnoa/pnob)
+
+   return np.sqrt(coef*((kb*Tcp(p))**2)*(alpha_td(p, T)/betaPolar_td(p, T)))
+
+def GapPlanar(p, T):
+   '''\Delta_{Planar}(p, T) for uniform polar phase.
+   '''
+   # J = 1.; Kelvin = 1.
+   # kb = 1.380649*(10**(-23))*J*(Kelvin**(-1))
+
+   pno_tuple = pno();pnoa = pno_tuple[0];pnob = pno_tuple[1]
+
+   coef = -(1./2.)*(pnoa/pnob)
+
+   return np.sqrt(coef*((kb*Tcp(p))**2)*(alpha_td(p, T)/betaPlanar_td(p, T)))
+
+
 def gapA(p, t):
    '''GapA in unit of Kb*Tcp
    '''
@@ -485,7 +527,28 @@ def gapB(p, t):
    '''GapA in unit of Kb*Tcp
    '''
    return GapB(p, t*Tcp(p))/(Tcp(p)*kb)
-   
+
+def gapPolar(p, t):
+   '''GapPolar in unit of Kb*Tcp
+   '''
+   return GapPolar(p, t*Tcp(p))/(Tcp(p)*kb)
+
+def gapPlanar(p, t):
+   '''GapPlanar in unit of Kb*Tcp
+   '''
+   return GapPlanar(p, t*Tcp(p))/(Tcp(p)*kb)
+
+def fA_td(p, t):
+   '''bulk energy density of A in unit of 1/3 (kb Tc)^2 * N(0)
+   '''
+   return fA(p, t*Tcp(p))/(1./3.*((kb*Tcp(p))**2)*N0(p))
+
+def fB_td(p, t):
+   '''bulk energy density of B in unit of 1/3 (kb Tc)^2 * N(0)
+   '''
+   return fB(p, t*Tcp(p))/(1./3.*((kb*Tcp(p))**2)*N0(p))
+
+
 ########################################################################
 ##       t_AB form RWS2019 and WS2015 strong coupling data sheets     ##
 ########################################################################
