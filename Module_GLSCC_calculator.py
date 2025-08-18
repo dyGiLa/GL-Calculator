@@ -195,6 +195,21 @@ def Tcp(p):
    elif Temperature_Scale == "PLTS2000":
       return Tc_poly_PLTS(p)*mK
 
+# experimental Tc in mK
+def Tcp_mK(p):
+   '''Tcp in unit of mK, with scale switch Temperature_Scale.
+
+   parameter p: pressure in unit of bar, ususlly from 0. to 34. for liquid He3.
+  
+   Global virable \"Temperature_Scale\" is used to contral which temperature scale will
+   be used. There two options are "PLTS2000" and "Greywall1986".
+
+   Defalut scale is "Greywall1986"
+   '''
+   # Kelvin = 1.; mK = 10**(-3)
+
+   return Tcp(p) * 1000
+   
 # experimental TAB in Kelvin   
 def TAB(p):
    '''TAB in unit of Kelvin, with scale switch Temperature_Scale.
@@ -214,6 +229,20 @@ def TAB(p):
    elif Temperature_Scale == "PLTS2000":
       return TAB_poly_PLTS(p)*mK
 
+# experimental TAB in mK   
+def TAB_mK(p):
+   '''TAB in unit of mK, with scale switch Temperature_Scale.
+
+   parameter p: pressure in unit of bar, ususlly from 0. to 34. for liquid He3.
+  
+   Global virable \"Temperature_Scale\" is used to contral which temperature scale will
+   be used. There two options are "PLTS2000" and "Greywall1986".
+
+   Defalut scale is "Greywall1986"
+   '''
+   # Kelvin = 1.; mK = 10**(-3)
+
+   return TAB(p) * 1000   
 
 # effective mass
 def mEff(p):
@@ -231,6 +260,11 @@ def mEff(p):
 def vF(p):
    BetaObject.vFermi_function(SC.P,SC.VF,p); return BetaObject.vf
 
+# Landau coefficient
+def F0a(p):
+   BetaObject.F0a_function(SC.P,SC.F0A,p); return BetaObject.F0a
+   
+   
 # xi0p
 def xi0p(p):
    # nano meter
@@ -244,7 +278,13 @@ def xi0GLp(p):
    # zeta3 = 1.2020569031595942854
     xiGL = xi0p(p)*(np.sqrt((7.*zeta3)/20.));
     return xiGL
-   
+
+# zero temperature GL time
+def tGL(p):
+   # return in unit of nano second
+   tGL = ((xi0GLp(p) * 10**-9)/vF(p)) * np.sqrt(5./3.);
+   return tGL * 10**9
+ 
 # xiGL(p,T) from JWS PRB, there is wired " 20 " 
 def xiGL_JWS(p, t):
    # p,T dependent GL coherent length, nanometer
@@ -267,6 +307,27 @@ def N0(p):
 
    return ((mEff(p)**(2))*vF(p))/((2*pi*pi)*(hbar**(3)))
 
+# c1 of scc beta
+def C1p(p):
+   BetaObject.c1_function(SC.P,SC.c1,p); return BetaObject.c1p
+
+# c2 of scc beta
+def C2p(p):
+   BetaObject.c2_function(SC.P,SC.c2,p); return BetaObject.c2p
+
+# c3 of scc beta
+def C3p(p):
+   BetaObject.c3_function(SC.P,SC.c3,p); return BetaObject.c3p
+
+# c4 of scc beta
+def C4p(p):
+   BetaObject.c4_function(SC.P,SC.c4,p); return BetaObject.c4p
+
+# c5 of scc beta
+def C5p(p):
+   BetaObject.c5_function(SC.P,SC.c5,p); return BetaObject.c5p
+
+   
 # K1, K2, K3, and K for gradient terms
 def K(p):
    # zeta3 = 1.2020569031595942854;
