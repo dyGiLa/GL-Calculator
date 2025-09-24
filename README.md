@@ -23,3 +23,7 @@ Checkout `T_c` and `T_AB` at `25 bar`:
 >>> gl.Tcp_mK(25)
 >>> gl.TAB_mK(25)
 ```
+### Generate Equlibrium Phase Diagram
+```shell
+~$ python3 phase-diagram-0-Hfield.py
+```
